@@ -1,0 +1,15 @@
+plot marker genes
+
+types of plots:
+1. tsne colored by gene expression (input: [group, gene, +/-])
+2. tsne colored by correlation (input: [genes x cells], [group, cell])
+3. heatmap colored by gene expression (input: [group, gene, +/-], [clusters])
+4. heatmap colored by correlation (input: [genes x cells], [clusters])
+
+input arguments:
+--genes
+--matrix
+--tsne
+--hmap
+--clust
+--ident
