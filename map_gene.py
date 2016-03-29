@@ -4,8 +4,8 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--gene', help='gene id')
 parser.add_argument('--genes', help='list of gene ids')
-parser.add_argument('--db', help='gene info database', default='~/aviv/db/human.gene_info.txt')
-parser.add_argument('--target', help='target list', default='~/aviv/db/human_genes.txt')
+parser.add_argument('--db', help='gene info database', default='/home/unix/csmillie/aviv/db/human.gene_info.txt')
+parser.add_argument('--target', help='target list', default='/home/unix/csmillie/aviv/db/human_genes.txt')
 args = parser.parse_args()
 
 # Get target genes

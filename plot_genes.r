@@ -4,9 +4,10 @@ library(optparse)
 if(interactive()){
     args = list()
     args$seur = '~/aviv/bm/tsne/human.ming500.minc25.seur.rds'
-    args$gene = 'SELP'
-    args$modules = ''
-    #args$modules = '~/aviv/db/markers/markers.test'
+    args$gene =''
+    #args$gene = 'SELP'
+    #args$modules = '~/aviv/db/cell_cycle/g1s_genes.txt'
+    args$modules = '~/aviv/db/markers/markers.test'
     args$type = 'sum'
     args$tsne = TRUE
     args$hmap = TRUE
@@ -45,10 +46,15 @@ if(args$modules != ''){
 }
 if(ncol(refs) == 1){
     refs = as.data.frame(cbind(refs[,1], refs[,1], 1))
+    refs[,1] = as.character(refs[,1])
+    refs[,2] = as.character(refs[,2])
     refs[,3] = as.numeric(refs[,3])
 }
 if(ncol(refs) == 2){
     refs = as.data.frame(cbind(refs, 1))
+    refs[,1] = as.character(refs[,1])
+    refs[,2] = as.character(refs[,2])
+    refs[,3] = as.numeric(refs[,3])
 }
 
 # Set cell identities
