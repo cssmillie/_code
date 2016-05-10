@@ -1,0 +1,97 @@
+library(optparse)
+if(interactive()){
+    args = list()
+    args$map = '~/aviv/summary/test.map'
+    args$ming = 500
+    args$npts = 10
+    args$pseudocount = 0
+    args$out = 'test'
+} else{
+option_list = list(make_option('--map', help='input map (1=id, 2=folder, 3=pattern)'),
+                   make_option('--ming', help='genes per cell cutoff', type='integer'),
+                   make_option('--npts', help='number of points to calculate for each plot'),
+                   make_option('--pseudocount', default=0, type='integer'),
+                   make_option('--out', help='output prefix')
+                   )
+args = parse_args(OptionParser(option_list=option_list))
+}
+
+multiplot = function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+    require(grid)
+    plots = c(list(...), plotlist)
+    numPlots = length(plots)
+    if (is.null(layout)) {
+        layout = matrix(seq(1, cols * ceiling(numPlots/cols)),
+                        ncol = cols, nrow = ceiling(numPlots/cols))
+    }
+    if (numPlots==1) {
+        print(plots[[1]])
+    } else {
+        grid.newpage()
+        pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+        for (i in 1:numPlots) {
+            matchidx = as.data.frame(which(layout == i, arr.ind = TRUE))
+            print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                            layout.pos.col = matchidx$col))
+        }
+    }
+}
+
+
+data = read.table(args$map, stringsAsFactors=F)
+
+x.g = c()
+x.h = c()
+x.m = c()
+x.t = c()
+y.h = c()
+y.m = c()
+y.t = c()
+
+for(i in 1:nrow(data)){
+
+    id = data[i,1]
+    folder = data[i,2]
+    pattern = data[i,3]
+
+    h.fn = paste('~/aviv/data/', folder, '/dge/human.dge.txt.gz', sep='')
+    m.fn = paste('~/aviv/data/', folder, '/dge/mouse.dge.txt.gz', sep='')
+
+    h.dge = read.table(paste('~/aviv/data/', folder, '/dge/human.dge.txt.gz', sep=''), header=T, row.names=1, sep='\t')
+    h.use = grep(pattern, colnames(h.dge))
+    h.dge = as.matrix(h.dge[,h.use])
+
+    m.dge = read.table(paste('~/aviv/data/', folder, '/dge/mouse.dge.txt.gz', sep=''), header=T, row.names=1, sep='\t')
+    m.use = grep(pattern, colnames(m.dge))
+    m.dge = as.matrix(m.dge[,m.use])
+
+    h.coll = length(unique(sapply(strsplit(colnames(h.dge), '\\.'), '[', 1)))
+    m.coll = length(unique(sapply(strsplit(colnames(m.dge), '\\.'), '[', 1)))
+    ncoll = max(h.coll, m.coll)
+    
+    total_reads = sum(h.dge + args$pseudocount) + sum(m.dge + args$pseudocount)
+    h.prob = as.vector(h.dge + args$pseudocount)/total_reads
+    m.prob = as.vector(m.dge + args$pseudocount)/total_reads
+    
+    max_reads = log10(sum(h.dge) + sum(m.dge))
+    min_reads = log10(10**5)
+    x = seq(min_reads, max_reads, length.out=args$npts)
+    x.g = c(x.g, rep(id, length(x)))
+    x.h = c(x.h, x/ncoll)
+    x.m = c(x.m, x/ncoll)
+    x.t = c(x.t, x/ncoll)
+    for(i in x){
+        num_reads = 10**i
+        h.tmp = matrix(rmultinom(1, num_reads, h.prob), nrow=nrow(h.dge), ncol=ncol(h.dge))
+        m.tmp = matrix(rmultinom(1, num_reads, m.prob), nrow=nrow(m.dge), ncol=ncol(m.dge))
+        h.cells = sum(colSums(h.tmp > 0) >= args$ming)
+        m.cells = sum(colSums(m.tmp > 0) >= args$ming)
+        t.cells = h.cells + m.cells
+        print(c(h.cells/ncoll, m.cells/ncoll, t.cells/ncoll))
+        y.h = c(y.h, h.cells/ncoll)
+        y.m = c(y.m, m.cells/ncoll)
+        y.t = c(y.t, t.cells/ncoll)
+    }
+}
+
+library(ggplot2)

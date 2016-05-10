@@ -1,21 +1,35 @@
 # This script merges multiple DGEs into a single DGE
 
+# Read input arguments
+library(optparse)
+option_list = list(make_option('--map', help='input mapping file (1=project, 2=path, 3=pattern)'),
+                   make_option('--ming', help='genes per cell cutoff', type='integer'),
+                   make_option('--out', help='output file')
+                   )
+args = parse_args(OptionParser(option_list=option_list))
+
 library(plyr)
 library(stringr)
 
-# Get input arguments (1=filenames, 2=ids, 3=gzfile, 4=genes/cell cutoff, 5=pdf)
-args = commandArgs(trailingOnly=T)
-fns = readLines(args[[1]])
-ids = readLines(args[[2]])
-cutoff = as.integer(args[[3]])
-pdf_fn = args[[4]]
-out_fn = args[[5]]
+# Extract variables
+map = read.table(args$map, stringsAsFactors=F)
 
 # Get list of DGEs
-dges = llply(fns, function(a){read.table(a, header=T, row.names=1, sep='\t')})
+dges = list()
+for(i in 1:nrow(map)){
+    name = map[i,1]
+    path = map[i,2]
+    pattern = map[i,3]
+    data = read.table(path, header=T, row.names=1, sep='\t')
+    dim1 = dim(data)
+    data = data[,grep(pattern, colnames(data))]
+    dim2 = dim(data)
+    print(c(name, dim1, dim2))
+    dges[[name]] = data
+}
 
 # Relabel colnames to prevent collisions
-for(i in 1:length(dges)){colnames(dges[[i]]) = paste(ids[i], colnames(dges[[i]]), sep='_')}
+for(i in 1:length(dges)){colnames(dges[[i]]) = paste(map[i,1], colnames(dges[[i]]), sep='.')}
 
 merge_dges = function(dges){
     # merge a list of dges into a single dge
@@ -30,16 +44,8 @@ merge_dges = function(dges){
 
 dge = merge_dges(dges)
 
-# Plot the number of genes per cell
-pdf(pdf_fn)
-par(mfrow=c(1,2))
-gene_count = sort(colSums(dge > 0), decreasing=T)
-plot(gene_count, 1:length(gene_count), type='l', xlim=c(0,1500), xlab='genes per cell (cutoff)', ylab='number of cells')
-plot(gene_count, cumsum(gene_count), type='l', xlim=c(0,1500), xlab='genes per cell (cutoff)', ylab='total genes')
-dev.off()
-
 # Filter DGE by gene count
-dge = dge[, colSums(dge > 0) >= cutoff]
+dge = dge[, colSums(dge > 0) >= args$ming]
 
 # Write DGE to outfile
-write.table(dge, out_fn, quote=F, sep='\t')
+write.table(dge, args$out, quote=F, sep='\t')

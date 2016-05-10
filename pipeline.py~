@@ -1,0 +1,118 @@
+import argparse
+
+# get command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('--map', help='mapping file')
+parser.add_argument('--dge', default='', help='input dge')
+parser.add_argument('--regex', help='use cells that match regex')
+parser.add_argument('--step', choices=['all', 'merge', 'tsne', 'cluster', 'markers'], default='all')
+parser.add_argument('--out', help='output prefix')
+parser.add_argument('--test', default=False, action='store_true')
+args = parser.parse_args()
+
+import os, re, ssub
+import numpy as np
+
+# enter pipeline at any step
+def check_name(name):
+    steps = 'all merge tsne cluster markers'.split()
+    if steps.index(args.step) <= steps.index(name):
+        return True
+    else:
+        return False
+
+def mkchdir(dname):
+    if not os.path.exists(dname):
+        os.mkdir(dname)
+    os.chdir(dname)
+    return True
+
+def check_outs(outs):
+    I = []
+    for i,out in enumerate(outs):
+        if not os.path.exists(out) or os.stat(out).st_size == 0:
+            I.append(i)
+    return I
+
+# initialize job submitter
+Submitter = ssub.Submitter()
+if args.test:
+    Submitter.p = True
+
+# run cmd & check output
+def run_cmds(name, cmds, outs, q='short', m=16):
+    if check_name(name) == False:
+        return True
+    Submitter.q = q
+    Submitter.m = m
+    if Submitter.p == True:
+        I = check_outs(outs)
+        if len(I) > 0:
+            print '\n'.join([cmds[i] for i in I])
+        return True
+    while True:
+        I = check_outs(outs)
+        if len(I) > 0:
+            cmds = [cmds[i] for i in I]
+            outs = [outs[i] for i in I]
+            Submitter.submit_and_wait(cmds)
+            Submitter.m += 4
+    return True
+    
+
+# step 1: merge dges
+# merge dges
+tmp = '%s.dge.txt' %(args.out)
+cmd1 = 'Rscript ~/aviv/code/merge_dges.r --map %s --ming 500 --out %s' %(args.map, tmp)
+run_cmds('merge', [cmd1], [tmp], m=16)
+# gzip dge
+dge = os.path.abspath('%s.gz' %(tmp))
+cmd1 = 'gzip %s' %(tmp)
+run_cmds('merge', [cmd1], [dge])
+
+if args.dge != '':
+    dge = os.path.abspath(args.dge)
+
+# step 2: run tsne
+mkchdir('../tsne')
+# run seurat
+cmds = []
+seurs = []
+logs = []
+for ming in [500, 750, 1000]:
+    for minc in [10, 25, 50]:
+        out = '%s.%d.%d' %(args.out, ming, minc)
+        cmds += ['Rscript ~/aviv/code/run_seurat.r --dge %s --ming %d --minc %d --regex %s --out %s' %(dge, ming, minc, args.regex, out)]
+        seurs += [os.path.abspath('%s.seur.rds' %(out))]
+        logs += [os.path.abspath('%s.log.rds' %(out))]
+run_cmds('tsne', cmds, seurs, q='long', m=16)
+
+
+# step 3: cluster tsne
+mkchdir('../cluster')
+# run graph clustering
+cmds = []
+clusts = []
+for i in range(len(seurs)):
+    seur = seurs[i]
+    log = logs[i]
+    prefix = re.search('(.*).seur.rds', os.path.basename(seur)).group(1)
+    for nnk in [10, 25, 50, 100]:
+        out = '%s.imap.%d' %(prefix, nnk)
+        cmds += ['Rscript ~/aviv/code/cluster_graph.r --seur %s --log %s --pca --nnk %d --type infomap --out %s' %(seur, log, nnk, out)]
+        clusts += [os.path.abspath('%s.clust.rds' %(out))]
+run_cmds('cluster', cmds, clusts, q='long', m=16)
+
+
+# step 4: markers
+mkchdir('../markers')
+# find all markers
+cmds = []
+marks = []
+for clust in clusts:
+    out = re.search('(.*).clust.rds', os.path.basename(clust)).group(1)
+    seur = re.search('(.*).imap', clust).group(1) + '.seur.rds'
+    seur = re.sub('/cluster/', '/tsne/', seur)
+    cmds += ['Rscript ~/aviv/code/find_markers.r --seur %s --clust %s --out %s' %(seur, clust, out)]
+    marks += [os.path.abspath('%s.markers.roc.txt' %(out))]
+run_cmds('markers', cmds, marks, q='long', m=16)

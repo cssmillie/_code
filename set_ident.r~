@@ -1,0 +1,7 @@
+library(optparse)
+
+option_list = list(make_option('--seur', help='seurat file'),
+                   make_option('--ident', help='cluster rds'),
+                   make_option('--out', help='output prefix')
+    )
+args = parse_args(OptionParser(option_list=option_list))

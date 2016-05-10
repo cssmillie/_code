@@ -17,12 +17,11 @@ if(interactive()){
 } else{
 option_list = list(make_option('--seur', help='seurat file'),
                    make_option('--log', help='log file'),
-                   make_option('--data', help='data', default=FALSE, action='store_true'),
-                   make_option('--pca', help='pca', default=FALSE, action='store_true'),
+                   make_option('--data', help='use data?', default=FALSE, action='store_true'),
+                   make_option('--pca', help='use pca?', default=FALSE, action='store_true'),
                    make_option('--nnk', help='nearest neighbor k', type='integer'),
                    make_option('--type', help='louvain, infomap', default='louvain'),
-                   make_option('--out', help='clustering results'),
-                   make_option('--tsne', help='tsne plot', default=''),
+                   make_option('--out', help='output prefix'),
                    make_option('--test', help='test', default=FALSE, action='store_true')
                )
 args = parse_args(OptionParser(option_list=option_list))
@@ -37,10 +36,10 @@ if(args$data == TRUE){
     d = t(seur@data)
 } else if (args$pca == TRUE){
     num_pcs = ncol(seur@pca.rot)
-    num_pcs = min(num_pcs, log$pc_sig$r)
+    num_pcs = min(num_pcs, log$pc_sig)
     d = seur@pca.rot[,1:num_pcs]
 } else {
-    stop('no --data or --pca flag')
+    stop('must specify --data or --pca')
 }
 
 # Test dataset
@@ -65,12 +64,11 @@ if(args$type == 'infomap'){
     g = cluster_infomap(g)
 }
 
-if(args$tsne != ''){
-    seur = set.ident(seur, ident.use=g$membership)
-    pdf(args$tsne, width=14, height=7)
-    tsne.plot(seur, pt.size=.5)
-    dev.off()
-}
+# Plot TSNE
+seur = set.ident(seur, ident.use=g$membership)
+pdf(paste(args$out, '.tsne.pdf', sep=''), width=14, height=7)
+tsne.plot(seur, pt.size=.5, do.label=T)
+dev.off()
 
 # Write output
-saveRDS(g, file=args$out)
+saveRDS(g, file=paste(args$out, '.clust.rds', sep=''))

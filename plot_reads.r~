@@ -1,0 +1,19 @@
+library(optparse)
+
+# Read input arguments
+option_list = list(make_option('--seur', help='seurat file'),
+                   make_option('--log', help='log file'),
+                   make_option('--out', help='output prefix', default='')
+                   )
+args = parse_args(OptionParser(option_list=option_list))
+
+library(Seurat)
+library(methods)
+library(gplots)
+
+# Load data
+seur = readRDS(args$seur)
+data = seur@scale.data
+
+# Get PCs
+pcs = seur@pca.x

@@ -6,19 +6,23 @@ library(gplots)
 # Read input arguments
 if(interactive()){
     args = list()
-    args$seur = 'human.ming500.minc25.G125.MinPts25.seur.rds'
+    args$seur = '~/aviv/human/tsne/human.500.25.seur.rds'
     args$matrix = '~/aviv/db/dmap/output/dmap_expression_mapped.tsv'
     args$type = 'sum'
     args$tsne = TRUE
-    args$hmap = TRUE
+    args$tsne_k = 25
+    args$tsne_i = FALSE
+    args$hmap = FALSE
     args$ident = ''
     args$out = 'test'
 } else{
 option_list = list(make_option('--seur', help='seurat file'),
                    make_option('--matrix', help='gene expression matrix', default=''),
-                   make_option('--tsne', help='tsne plot', default=FALSE, action='store_true'),
+                   make_option('--tsne', help='plot combined tsne', default=FALSE, action='store_true'),
+                   make_option('--tsne_k', help='number of clusters to diplay in combined tsne', default=25, type='integer'),
+                   make_option('--tsne_i', help='plot individual tsnes', default=FALSE, action='store_true'),
                    make_option('--hmap', help='hmap plot', default=FALSE, action='store_true'),
-                   make_option('--ident', help='cluster list (1=cell, 2=group)', default=''),
+                   make_option('--ident', help='clusters file (rds)', default=''),
                    make_option('--out', help='output prefix', default='')
                    )
 args = parse_args(OptionParser(option_list=option_list))
@@ -33,8 +37,7 @@ refs = read.table(args$matrix, sep='\t', header=T, row.names=1)
 
 # Set cell identities
 if(args$ident != ''){
-    ident.use = read.table(args$ident, sep='\t', row.names=1)
-    ident.use = ident[colnames(data),1]
+    ident.use = readRDS(args$ident)$membership
     seur = set.ident(seur, ident.use=ident.use)
 }
 
@@ -46,8 +49,8 @@ refs = refs[genes.use,]
 # Get scores (rows=single cells, cols=reference cells)
 corr = cor(data, refs)
 
-# Plot results as TSNE (colors = module scores)
-if(args$tsne){
+# Plot individual results as TSNE (colors = module scores)
+if(args$tsne_i){
     d = data.frame(x=seur@tsne.rot[,1], y=seur@tsne.rot[,2])
     for(cell in colnames(corr)){
         d$z = scale(as.numeric(corr[,cell]))
@@ -55,6 +58,25 @@ if(args$tsne){
         ggplot(d, aes(x=x, y=y)) + geom_point(aes(colour=z)) + scale_colour_gradient(low='#eeeeee', high='red') + theme_minimal()
         ggsave(paste(args$out, cell, 'tsne.pdf', sep='.'), width=14, height=7)
     }
+}
+
+# Plot combined results as TSNE (colors = best modules)
+if(args$tsne){
+    
+    # Initialize data
+    d = data.frame(x=seur@tsne.rot[,1], y=seur@tsne.rot[,2])
+    k = min(args$tsne_k, ncol(corr))
+    
+    # Get best cluster for each cell
+    ref_clusters = kmeans(t(corr), k)$cluster
+    ref_clusters_names = aggregate(names(ref_clusters), by=list(ref_clusters), sample, 1)[,-1]
+    ref_clusters = as.character(sapply(ref_clusters, function(i){ref_clusters_names[i]}))
+    ident = as.character(ref_clusters[apply(corr, 1, which.max)])
+    
+    # Plot results
+    seur = set.ident(seur, ident.use=ident)
+    tsne.plot(seur, pt.size=1)
+    ggsave(paste(args$out, 'combine', 'tsne.pdf', sep='.'), width=14, height=7)
 }
 
 # Plot results as heatmap (colors = module scores)

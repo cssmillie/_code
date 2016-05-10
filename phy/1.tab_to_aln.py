@@ -2,7 +2,7 @@ import argparse, sys
 
 # Get command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--aln', help='alignment matrix (generated in R)', required=True)
+parser.add_argument('--tab', help='alignment matrix (generated in R)', required=True)
 parser.add_argument('--sep', help='sample separator', default=';')
 parser.add_argument('--phy', help='phylip output file', default='')
 parser.add_argument('--fst', help='fasta output file (converted to dna)', default='')
@@ -17,7 +17,7 @@ if args.phy:
     m = 0
     n = 0
     l = 9
-    for line in open(args.aln):
+    for line in open(args.tab):
         line = line.rstrip().split(args.sep)
         if line[0] in remove:
             continue
@@ -31,7 +31,7 @@ if args.phy:
 
     out = open(args.phy, 'w')
     out.write('%s %s\n' %(m, n))    
-    for line in open(args.aln):
+    for line in open(args.tab):
         line = line.rstrip().split(args.sep)
         if line[0] in remove:
             continue
@@ -47,7 +47,7 @@ if args.fst:
     ttab = maketrans(nums, dnas)
     
     out = open(args.fst, 'w')
-    for line in open(args.aln):
+    for line in open(args.tab):
         line = line.rstrip().split(args.sep)
         if line[0] in remove:
             continue

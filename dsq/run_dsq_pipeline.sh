@@ -45,7 +45,7 @@ mkdir -p ../bams_HUMAN_MOUSE
 mkdir -p ../UMI_DGE
 mkdir -p ../reads_DGE
 
-ssub -m 150 -o ../qsub_logs/${b}.log  "./run_Alignment_${b}.sh"
+ssub -q long -m 150 -o ../qsub_logs/${b}.log  "./run_Alignment_${b}.sh"
 
 echo ${numCells[l]}
 l=`expr $l + 1`

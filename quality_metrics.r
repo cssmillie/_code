@@ -27,7 +27,7 @@ multiplot = function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 if(interactive()){
     args = list()
     args$map = 'test.in'
-    args$out = 'test.out'
+    args$out = 'test'
 } else{
 # Read input arguments
 option_list = list(make_option('--map', help='map (1=id, 2=folder, 3=pattern'),
@@ -38,6 +38,8 @@ args = parse_args(OptionParser(option_list=option_list))
 
 # Load input data
 data = read.table(args$map, stringsAsFactors=F)
+data = cbind(data, paste('/home/unix/csmillie/aviv/data/', data[,2], '/raw', sep=''))
+colnames(data) = c('id', 'project_id', 'pattern', 'path')
 
 # Get files
 groups = data[,1]
@@ -48,27 +50,27 @@ c_fns = list() # cell types
 for(i in 1:nrow(data)){
     group_id = data[i,1]
     
-    path = paste(data[i,2], '/QC_files', sep='')
+    path = paste(data[i,4], '/QC_files', sep='')
     pattern = paste(data[i,3], '.*ReadQualityMetrics.txt', sep='')
     files = list.files(path=path, pattern=pattern, full.names=TRUE)
     q_fns[[group_id]] = files
     file_ids = gsub('.*/', '', gsub('_star.*', '', files))
     
-    path = paste(data[i,2], '/UMI_DGE', sep='')
+    path = paste(data[i,4], '/UMI_DGE', sep='')
     pattern = paste(data[i,3], '.*HUMAN.*summary.txt', sep='')
     files = list.files(path=path, pattern=pattern, full.names=TRUE)
     new_ids = gsub('.*/', '', gsub('_star.*', '', files))
     h_fns[[group_id]] = files
     if(sum(file_ids != new_ids) > 0){stop('files not aligned')}
     
-    path = paste(data[i,2], '/UMI_DGE', sep='')
+    path = paste(data[i,4], '/UMI_DGE', sep='')
     pattern = paste(data[i,3], '.*MOUSE.*summary.txt', sep='')
     files = list.files(path=path, pattern=pattern, full.names=TRUE)
     new_ids = gsub('.*/', '', gsub('_star.*', '', files))
     m_fns[[group_id]] = files
     if(sum(file_ids != new_ids) > 0){stop('files not aligned')}
     
-    path = paste(data[i,2], '/QC_files', sep='')
+    path = paste(data[i,4], '/QC_files', sep='')
     pattern = paste(data[i,3], '.*categorized_cellTypes.txt', sep='')
     files = list.files(path=path, pattern=pattern, full.names=TRUE)
     new_ids = gsub('.*/', '', gsub('_star.*', '', files))
@@ -122,8 +124,8 @@ cell_types = sapply(c_fns, function(a){
 # Plot variables
 # num_genes = number of genes per cell
 # num_cells = number of cells per collection
-# num_cells.norm = number of cells per collection per 1000 total reads
-# num_reads.norm = number of reads per collection per 1000 total reads
+# num_cells.norm = number of cells per collection per read
+# num_reads.norm = number of reads per collection per read
 
 # human plot variables
 h.group_ids = c()
@@ -191,13 +193,13 @@ for(i in 1:nrow(data)){
     m.num_cells = c(m.num_cells, cumsum(m.cells)/ncoll)
     t.num_cells = c(t.num_cells, cumsum(t.cells)/ncoll)
     
-    h.num_cells.norm = c(h.num_cells.norm, 1000*cumsum(h.cells)/reads[group,1]/ncoll)
-    m.num_cells.norm = c(m.num_cells.norm, 1000*cumsum(m.cells)/reads[group,1]/ncoll)
-    t.num_cells.norm = c(t.num_cells.norm, 1000*cumsum(t.cells)/reads[group,1]/ncoll)
+    h.num_cells.norm = c(h.num_cells.norm, cumsum(h.cells)/reads[group,1]/ncoll)
+    m.num_cells.norm = c(m.num_cells.norm, cumsum(m.cells)/reads[group,1]/ncoll)
+    t.num_cells.norm = c(t.num_cells.norm, cumsum(t.cells)/reads[group,1]/ncoll)
 
-    h.num_reads.norm = c(h.num_reads.norm, 1000*cumsum(h.reads)/reads[group,1]/ncoll)
-    m.num_reads.norm = c(m.num_reads.norm, 1000*cumsum(m.reads)/reads[group,1]/ncoll)
-    t.num_reads.norm = c(t.num_reads.norm, 1000*cumsum(t.reads)/reads[group,1]/ncoll)
+    h.num_reads.norm = c(h.num_reads.norm, cumsum(h.reads)/reads[group,1]/ncoll)
+    m.num_reads.norm = c(m.num_reads.norm, cumsum(m.reads)/reads[group,1]/ncoll)
+    t.num_reads.norm = c(t.num_reads.norm, cumsum(t.reads)/reads[group,1]/ncoll)
 
 }
 
@@ -214,7 +216,7 @@ pdf(paste(args$out, '.cells.pdf', sep=''), width=14, height=9)
 multiplot(p1, p2, p3, cols=2)
 dev.off()
 
-# Plot cells per collection per 1000 total reads
+# Plot cells per collection per read
 p1 = ggplot(h.data) + geom_line(aes(x=num_genes, y=num_cells.norm, colour=group_ids)) + xlim(c(500,2000)) + xlab('Genes per cell (cutoff)') + ylab('Cells per collection per read') + theme_minimal() + ggtitle('Human')
 p2 = ggplot(m.data) + geom_line(aes(x=num_genes, y=num_cells.norm, colour=group_ids)) + xlim(c(500,2000)) + xlab('Genes per cell (cutoff)') + ylab('Cells per collection per read') + theme_minimal() + ggtitle('Mouse')
 p3 = ggplot(t.data) + geom_line(aes(x=num_genes, y=num_cells.norm, colour=group_ids)) + xlim(c(500,2000)) + xlab('Genes per cell (cutoff)') + ylab('Cells per collection per read') + theme_minimal() + ggtitle('Total')
@@ -222,7 +224,7 @@ pdf(paste(args$out, '.cells.norm.pdf', sep=''), width=14, height=9)
 multiplot(p1, p2, p3, cols=2)
 dev.off()
 
-# Plot transcripts per collection per 1000 total reads
+# Plot transcripts per collection per read
 p1 = ggplot(h.data) + geom_line(aes(x=num_genes, y=num_reads.norm, colour=group_ids)) + xlim(c(500,2000)) + xlab('Genes per cell (cutoff)') + ylab('Transcripts per collection per read') + theme_minimal() + ggtitle('Human')
 p2 = ggplot(m.data) + geom_line(aes(x=num_genes, y=num_reads.norm, colour=group_ids)) + xlim(c(500,2000)) + xlab('Genes per cell (cutoff)') + ylab('Transcripts per collection per read') + theme_minimal() + ggtitle('Mouse')
 p3 = ggplot(t.data) + geom_line(aes(x=num_genes, y=num_reads.norm, colour=group_ids)) + xlim(c(500,2000)) + xlab('Genes per cell (cutoff)') + ylab('Transcripts per collection per read') + theme_minimal() + ggtitle('Total')
@@ -232,9 +234,11 @@ dev.off()
 
 # Plot total, mapped, and hq reads
 pdf(paste(args$out, '.read_stats.pdf', sep=''))
-par(mfrow=c(2,1))
-barplot(t(reads/collections), las=2, beside=T, col=rainbow(3), main='Number of reads per collection', legend=T)
-barplot(t(reads[,2:3]/reads[,1]), las=2, beside=T, col=rainbow(2), ylim=c(0,1), main='Fraction of total reads', legend=T)
+par(mfrow=c(2,1), mar=c(8,5,1,1))
+barplot(t(reads/collections), las=2, beside=T, col=rainbow(3), ylab='Reads per collection', cex.names=.6, cex.axis=.6, legend=TRUE)
+legend('topright', legend=c('Total', 'Mapped', 'HQ'), fill=rainbow(3))
+barplot(t(reads[,2:3]/reads[,1]), las=2, beside=T, col=rainbow(2), ylim=c(0,1), ylab='Fraction of total reads', cex.names=.6, cex.axis=.6, legend=TRUE)
+legend('topright', legend=c('Mapped', 'HQ'), fill=rainbow(2))
 dev.off()
 
 # Estimate doublet rates

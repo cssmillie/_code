@@ -1,6 +1,6 @@
 library(ineq)
 
-getNumReadsPerCellBarcode<-function (bamFile, cellTagCollapsed="XC", readMapQuality=10, organism=NULL, tempDir, reportDir, gapAnalysisDir="/broad/mccarroll/software/dropseq/jn_branch" ) {
+getNumReadsPerCellBarcode<-function (bamFile, cellTagCollapsed="XC", readMapQuality=10, organism=NULL, tempDir, reportDir, gapAnalysisDir="/broad/mccarroll/software/dropseq/prod" ) {
 	
 	o=paste(reportDir, "/", basename(bamFile), "_numReads_perCell_", cellTagCollapsed, "_mq_", readMapQuality, ".txt.gz", sep="")	
 	command=paste(gapAnalysisDir, "/BAMTagHistogram I=", bamFile, " OUTPUT=", o, " TAG=", cellTagCollapsed, " READ_QUALITY=", readMapQuality, " FILTER_PCR_DUPLICATES=false", " TMP_DIR=", tempDir, sep="")

@@ -18,7 +18,7 @@ metaDataName=hg19_mm10_transgenes
 refSequence=${metaDataDir}/${metaDataName}.fasta
 baseQuality=10
 picardLoc=/seq/software/picard/current/bin
-gapToolsLoc=/broad/mccarroll/software/dropseq/jn_branch
+gapToolsLoc=/broad/mccarroll/software/dropseq/prod
 
 # IF THE NUMBER OF CORE BARCODES IS SET to a non-zero number, then use that for barcode collapse.  OTHERWISE, use the NUM_READS_CORE to set the min number of reads for a barcode to be considered core.
 NUM_CORE_BARCODES=0

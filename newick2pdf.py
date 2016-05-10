@@ -11,8 +11,14 @@ parser.add_argument('--mode', help='display mode', choices=['normal', 'circular'
 parser.add_argument('--out', help='pdf outfile', required=True)
 args = parser.parse_args()
 
+# Get root
+if args.root == 'midpoint':
+    root = '1'
+else:
+    root = args.root
+
 # Modify tree
-cmd = 'java -Xmx16m -jar ~/bin/TreeCollapseCL4.jar -f %s -b %s -r %s' %(args.tree, args.boot, args.root)
+cmd = 'java -Xmx16m -jar ~/bin/TreeCollapseCL4.jar -f %s -b %s -r %s' %(args.tree, args.boot, root)
 os.system(cmd)
 prefix, suffix = re.search('(.*?)\.(.*?)$', args.tree).groups()
 tree = '%s_%scoll.%s' %(prefix, args.boot, suffix)
