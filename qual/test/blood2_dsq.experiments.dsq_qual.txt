@@ -1,0 +1,2 @@
+Project	Number of collections	Total reads	Mapped reads	Mapped HQ reads	Mapped reads (%)	Mapped HQ reads (%)	Ribosomal (%)	Coding (%)	UTR (%)	Intronic (%)	Intergenic (%)	Doublet rate
+1	blood2_dsq	2	498254001	440169776	381253976	88.3424468477073	76.517995888607	5.08508329740086	40.6240489812346	13.4505621120165	30.8282765750308	10.0391176345909	NA

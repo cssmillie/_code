@@ -1,0 +1,2 @@
+Project	Number of collections	Total reads	Mapped reads	Mapped HQ reads	Mapped reads (%)	Mapped HQ reads (%)	Ribosomal (%)	Coding (%)	UTR (%)	Intronic (%)	Intergenic (%)	Doublet rate
+1	mouse1	18	514224517	456014981	359239643	88.6801321065755	69.8604658322816	1.88339961105746	48.6499355415439	27.5258957524136	11.2393109691382	10.7083280027774	NA

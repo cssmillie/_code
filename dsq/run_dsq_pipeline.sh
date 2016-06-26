@@ -1,7 +1,7 @@
 #!/bin/bash
 
 refFastaPath=/broad/mccarroll/software/metadata/merged_reference/hg19_mm10_transgenes/hg19_mm10_transgenes.fasta
-numCells=(3000 3000 3000 3000 3000 3000 3000 3000 3000 3000 3000 3000 3000)
+numCells=(3000 3000 3000 3000 3000 3000 3000 3000 3000 3000 3000 3000)
 
 rm -rf ../Analysis ../qsub_logs ../bam* ../*DGE ../temp* ../QC*
 mkdir -p ../qsub_logs

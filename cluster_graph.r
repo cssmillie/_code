@@ -66,7 +66,7 @@ if(args$type == 'infomap'){
 
 # Plot TSNE
 seur = set.ident(seur, ident.use=g$membership)
-pdf(paste(args$out, '.tsne.pdf', sep=''), width=14, height=7)
+pdf(paste(args$out, '.tsne.pdf', sep=''), width=12, height=8)
 tsne.plot(seur, pt.size=.5, do.label=T)
 dev.off()
 

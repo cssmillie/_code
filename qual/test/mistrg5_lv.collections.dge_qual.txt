@@ -1,0 +1,12 @@
+Project	Human cells (cutoff=500)	Human median genes per cell (cutoff=500)	Human median reads per cell (cutoff=500)	Mouse cells (cutoff=500)	Mouse median genes per cell (cutoff=500)	Mouse median reads per cell (cutoff=500)	Total cells (cutoff=500)	Total median genes per cell (cutoff=500)	Total median reads per cell (cutoff=500)	Human cells (cutoff=750)	Human median genes per cell (cutoff=750)	Human median reads per cell (cutoff=750)	Mouse cells (cutoff=750)	Mouse median genes per cell (cutoff=750)	Mouse median reads per cell (cutoff=750)	Total cells (cutoff=750)	Total median genes per cell (cutoff=750)	Total median reads per cell (cutoff=750)	Human cells (cutoff=1000)	Human median genes per cell (cutoff=1000)	Human median reads per cell (cutoff=1000)	Mouse cells (cutoff=1000)	Mouse median genes per cell (cutoff=1000)	Mouse median reads per cell (cutoff=1000)	Total cells (cutoff=1000)	Total median genes per cell (cutoff=1000)	Total median reads per cell (cutoff=1000)
+DF13_lv	mistrg5_lv	1275	729	1135	0	0	0	1275	729	1135	593	729	1135	0	0	0	593	729	1135	261	729	1135	0	0	0	261	729	1135
+DF14_lv	mistrg5_lv	1422	802	1298	0	0	0	1422	802	1298	825	802	1298	0	0	0	825	802	1298	399	802	1298	0	0	0	399	802	1298
+DF15_lv	mistrg5_lv	1090	757.5	1202	0	0	0	1090	757.5	1202	556	757.5	1202	0	0	0	556	757.5	1202	277	757.5	1202	0	0	0	277	757.5	1202
+DF16_lv	mistrg5_lv	1438	816	1358	0	0	0	1438	816	1358	854	816	1358	0	0	0	854	816	1358	407	816	1358	0	0	0	407	816	1358
+DF17_lv	mistrg5_lv	401	674	1108	0	0	0	401	674	1108	153	674	1108	0	0	0	153	674	1108	58	674	1108	0	0	0	58	674	1108
+DF18_lv	mistrg5_lv	582	725.5	1262.5	0	0	0	582	725.5	1262.5	270	725.5	1262.5	0	0	0	270	725.5	1262.5	129	725.5	1262.5	0	0	0	129	725.5	1262.5
+DF19_lv	mistrg5_lv	990	701	1109	0	0	0	990	701	1109	435	701	1109	0	0	0	435	701	1109	167	701	1109	0	0	0	167	701	1109
+DF20_lv	mistrg5_lv	1126	774	1253.5	0	0	0	1126	774	1253.5	605	774	1253.5	0	0	0	605	774	1253.5	281	774	1253.5	0	0	0	281	774	1253.5
+DF21_lv	mistrg5_lv	1337	782	1282	0	0	0	1337	782	1282	737	782	1282	0	0	0	737	782	1282	358	782	1282	0	0	0	358	782	1282
+DF22_lv	mistrg5_lv	1331	771	1250	0	0	0	1331	771	1250	706	771	1250	0	0	0	706	771	1250	349	771	1250	0	0	0	349	771	1250
+DF24_lv	mistrg5_lv	928	717.5	1102	0	0	0	928	717.5	1102	421	717.5	1102	0	0	0	421	717.5	1102	191	717.5	1102	0	0	0	191	717.5	1102

@@ -1,0 +1,59 @@
+args = commandArgs(trailingOnly=T)
+
+cutoff = as.integer(commandArgs(trailingOnly=T)[[1]])
+
+#cutoff = 500
+
+folders = readLines('/home/unix/csmillie/aviv/data/folders.txt')
+folders = folders[grep('^#', folders, invert=T)]
+
+all_counts = data.frame()
+
+for(folder in folders){
+
+    # Get filenames
+    h.dge = paste('/home/unix/csmillie/aviv/data/', folder, '/dge/human.dge.txt.gz', sep='')
+    m.dge = paste('/home/unix/csmillie/aviv/data/', folder, '/dge/mouse.dge.txt.gz', sep='')
+
+    # Does the file exist?
+    if(!file.exists(h.dge) | !file.exists(m.dge)){next}
+    
+    # Get dges
+    print('Loading Human DGE')
+    h.dge = read.table(h.dge, sep='\t', header=T, row.names=1)
+    print('Loading Mouse DGE')
+    m.dge = read.table(m.dge, sep='\t', header=T, row.names=1)
+
+    # Get collections
+    collections = c()
+    if(ncol(h.dge) > 1){
+        h.collections = sapply(strsplit(colnames(h.dge), '\\.'), '[', 1)
+        print(paste('Found', length(unique(h.collections)), 'human collections'))
+        h.cells = data.frame(aggregate(colSums(h.dge > 0) >= cutoff, list(h.collections), sum), row.names=1)
+        collections = c(collections, h.collections)
+    }
+    if(ncol(m.dge) > 1){
+        m.collections = sapply(strsplit(colnames(m.dge), '\\.'), '[', 1)
+        print(paste('Found', length(unique(m.collections)), 'mouse collections'))
+        m.cells = data.frame(aggregate(colSums(m.dge > 0) >= cutoff, list(m.collections), sum), row.names=1)
+        collections = c(collections, m.collections)
+    }
+    collections = unique(collections)
+
+    # Get counts
+    counts = matrix(0, nrow=length(collections), ncol=4)
+    counts = data.frame(counts)
+    rownames(counts) = collections
+    colnames(counts) = c('name', 'human', 'mouse', 'total')
+    if(sum(! rownames(h.cells) %in% rownames(counts)) == 0){
+        counts[rownames(h.cells),'human'] = h.cells[,1]
+    }
+    if(sum(! rownames(m.cells) %in% rownames(counts)) == 0){
+        counts[rownames(m.cells),'mouse'] = m.cells[,1]
+    }
+    counts$total = counts$human + counts$mouse
+    counts$name = folder
+    all_counts = rbind(all_counts, counts)
+}
+
+write.table(all_counts, file=args[[2]], sep='\t', quote=F)

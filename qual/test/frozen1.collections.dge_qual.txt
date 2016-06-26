@@ -1,0 +1,11 @@
+Project	Human cells (cutoff=500)	Human median genes per cell (cutoff=500)	Human median reads per cell (cutoff=500)	Mouse cells (cutoff=500)	Mouse median genes per cell (cutoff=500)	Mouse median reads per cell (cutoff=500)	Total cells (cutoff=500)	Total median genes per cell (cutoff=500)	Total median reads per cell (cutoff=500)	Human cells (cutoff=750)	Human median genes per cell (cutoff=750)	Human median reads per cell (cutoff=750)	Mouse cells (cutoff=750)	Mouse median genes per cell (cutoff=750)	Mouse median reads per cell (cutoff=750)	Total cells (cutoff=750)	Total median genes per cell (cutoff=750)	Total median reads per cell (cutoff=750)	Human cells (cutoff=1000)	Human median genes per cell (cutoff=1000)	Human median reads per cell (cutoff=1000)	Mouse cells (cutoff=1000)	Mouse median genes per cell (cutoff=1000)	Mouse median reads per cell (cutoff=1000)	Total cells (cutoff=1000)	Total median genes per cell (cutoff=1000)	Total median reads per cell (cutoff=1000)
+DF10_bm	frozen1	190	752.5	1244.5	0	0	0	190	752.5	1244.5	95	752.5	1244.5	0	0	0	95	752.5	1244.5	60	752.5	1244.5	0	0	0	60	752.5	1244.5
+DF11_bm	frozen1	107	837	1569	0	0	0	107	837	1569	60	837	1569	0	0	0	60	837	1569	39	837	1569	0	0	0	39	837	1569
+DF2_bm	frozen1	306	773	1409.5	0	0	0	306	773	1409.5	163	773	1409.5	0	0	0	163	773	1409.5	98	773	1409.5	0	0	0	98	773	1409.5
+DF3_bm	frozen1	330	774	1421.5	0	0	0	330	774	1421.5	174	774	1421.5	0	0	0	174	774	1421.5	118	774	1421.5	0	0	0	118	774	1421.5
+DF4_bm	frozen1	285	806	1516	0	0	0	285	806	1516	159	806	1516	0	0	0	159	806	1516	110	806	1516	0	0	0	110	806	1516
+DF5_bm	frozen1	309	653	1138	0	0	0	309	653	1138	115	653	1138	0	0	0	115	653	1138	71	653	1138	0	0	0	71	653	1138
+DF6_bm	frozen1	265	802	1474	0	0	0	265	802	1474	148	802	1474	0	0	0	148	802	1474	99	802	1474	0	0	0	99	802	1474
+DF7_bm	frozen1	293	760	1314	0	0	0	293	760	1314	150	760	1314	0	0	0	150	760	1314	88	760	1314	0	0	0	88	760	1314
+DF8_bm	frozen1	350	665	1166	0	0	0	350	665	1166	141	665	1166	0	0	0	141	665	1166	87	665	1166	0	0	0	87	665	1166
+DF9_bm	frozen1	203	735	1262	0	0	0	203	735	1262	97	735	1262	0	0	0	97	735	1262	61	735	1262	0	0	0	61	735	1262

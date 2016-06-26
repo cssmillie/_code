@@ -1,0 +1,13 @@
+Project	Human cells (cutoff=500)	Human median genes per cell (cutoff=500)	Human median reads per cell (cutoff=500)	Mouse cells (cutoff=500)	Mouse median genes per cell (cutoff=500)	Mouse median reads per cell (cutoff=500)	Total cells (cutoff=500)	Total median genes per cell (cutoff=500)	Total median reads per cell (cutoff=500)	Human cells (cutoff=750)	Human median genes per cell (cutoff=750)	Human median reads per cell (cutoff=750)	Mouse cells (cutoff=750)	Mouse median genes per cell (cutoff=750)	Mouse median reads per cell (cutoff=750)	Total cells (cutoff=750)	Total median genes per cell (cutoff=750)	Total median reads per cell (cutoff=750)	Human cells (cutoff=1000)	Human median genes per cell (cutoff=1000)	Human median reads per cell (cutoff=1000)	Mouse cells (cutoff=1000)	Mouse median genes per cell (cutoff=1000)	Mouse median reads per cell (cutoff=1000)	Total cells (cutoff=1000)	Total median genes per cell (cutoff=1000)	Total median reads per cell (cutoff=1000)
+blood_ACD2	frozen2	82	594	1128	0	0	0	82	594	1128	14	594	1128	0	0	0	14	594	1128	4	594	1128	0	0	0	4	594	1128
+DF1_bm	frozen2	291	715	1317	0	0	0	291	715	1317	138	715	1317	0	0	0	138	715	1317	87	715	1317	0	0	0	87	715	1317
+fresh_CD45neg	frozen2	52	745.5	1344.5	0	0	0	52	745.5	1344.5	26	745.5	1344.5	0	0	0	26	745.5	1344.5	19	745.5	1344.5	0	0	0	19	745.5	1344.5
+fresh_CD45pos	frozen2	49	810	1444	0	0	0	49	810	1444	28	810	1444	0	0	0	28	810	1444	13	810	1444	0	0	0	13	810	1444
+TB1_bm	frozen2	417	763	1347	0	0	0	417	763	1347	214	763	1347	0	0	0	214	763	1347	124	763	1347	0	0	0	124	763	1347
+TB2_bm	frozen2	420	774	1466.5	0	0	0	420	774	1466.5	219	774	1466.5	0	0	0	219	774	1466.5	139	774	1466.5	0	0	0	139	774	1466.5
+TB3_bm	frozen2	239	700	1176	0	0	0	239	700	1176	107	700	1176	0	0	0	107	700	1176	50	700	1176	0	0	0	50	700	1176
+TB4_bm	frozen2	163	711	1280	0	0	0	163	711	1280	77	711	1280	0	0	0	77	711	1280	41	711	1280	0	0	0	41	711	1280
+TB5_bm	frozen2	287	782	1410	0	0	0	287	782	1410	157	782	1410	0	0	0	157	782	1410	87	782	1410	0	0	0	87	782	1410
+TB6_bm	frozen2	334	775	1517	0	0	0	334	775	1517	178	775	1517	0	0	0	178	775	1517	106	775	1517	0	0	0	106	775	1517
+TB7_bm	frozen2	126	762.5	1261	0	0	0	126	762.5	1261	66	762.5	1261	0	0	0	66	762.5	1261	25	762.5	1261	0	0	0	25	762.5	1261
+TB8_bm	frozen2	183	691	1172	0	0	0	183	691	1172	68	691	1172	0	0	0	68	691	1172	20	691	1172	0	0	0	20	691	1172

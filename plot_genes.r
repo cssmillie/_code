@@ -19,6 +19,7 @@ option_list = list(make_option('--seur', help='seurat file'),
                    make_option('--tsne', help='tsne plot', default=FALSE, action='store_true'),
                    make_option('--hmap', help='hmap plot', default=FALSE, action='store_true'),
                    make_option('--ident', help='cluster list (1=cell, 2=group)', default=''),
+		   make_option('--clust', help='cluster file (rds)', default=''),
                    make_option('--out', help='output prefix', default='')
                    )
 args = parse_args(OptionParser(option_list=option_list))
@@ -30,7 +31,8 @@ library(gplots)
 
 # Load data
 seur = readRDS(args$seur)
-data = seur@scale.data
+#data = seur@scale.data
+data = seur@data
 
 # Get reference genes
 if(args$gene != ''){
@@ -55,13 +57,14 @@ if(args$ident != ''){
     seur = set.ident(seur, ident.use=ident.use)
 }
 
+if(args$clust != ''){
+    ident.use = readRDS(args$clust)$membership
+    seur = set.ident(seur, ident.use=ident.use)
+}
+
 # Intersect gene names
 i = (1:nrow(refs))[refs[,3] %in% rownames(data)]
 if(length(i) == 0){stop('genes not found')}
-#genes.use = intersect(unique(refs[,3]), rownames(data))
-#if(length(genes.use) == 0){stop('genes not found')}
-#data = data[genes.use,,drop=F]
-#refs = refs[refs[,3] %in% genes.use,,drop=F]
 refs = refs[i,,drop=F]
 data = data[refs[,3],,drop=F]
 print('Plotting genes:')
@@ -91,7 +94,7 @@ if(args$tsne){
         d$z = scale(as.numeric(scores[module,]))
         d$z[d$z < 0] = 0
         ggplot(d, aes(x=x, y=y)) + geom_point(aes(colour=z)) + scale_colour_gradient(low='#eeeeee', high='red') + theme_minimal()
-        ggsave(paste(args$out, module, 'tsne.pdf', sep='.'), width=14, height=7)
+        ggsave(paste(args$out, module, 'tsne.pdf', sep='.'), width=12, height=8)
     }
 }
 
@@ -100,7 +103,9 @@ if(args$hmap){
     scores = aggregate(t(scores), by=list(seur@ident), mean)
     rownames(scores) = as.character(scores[,1])
     scores = scores[,-1]
-    pdf(paste(args$out, 'hmap.pdf', sep='.'), width=14, height=7)
-    heatmap.2(as.matrix(scores), Rowv=TRUE, Colv=NULL, trace='none', col=colorRampPalette(c('purple', 'black', 'gold'))(64))
+    scores[scores > 2] = 2
+    pdf(paste(args$out, 'hmap.pdf', sep='.'), width=12, height=8)
+    #heatmap.2(as.matrix(scores), Rowv=TRUE, Colv=NULL, trace='none', margins=c(10,10), col=colorRampPalette(c('purple', 'black', 'gold'))(64))
+    heatmap.2(as.matrix(scores), Rowv=TRUE, Colv=NULL, trace='none', margins=c(10,10), col=colorRampPalette(c('black', 'gold'))(64))
     dev.off()
 }

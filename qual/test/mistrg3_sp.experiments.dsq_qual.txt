@@ -1,0 +1,2 @@
+Project	Number of collections	Total reads	Mapped reads	Mapped HQ reads	Mapped reads (%)	Mapped HQ reads (%)	Ribosomal (%)	Coding (%)	UTR (%)	Intronic (%)	Intergenic (%)	Doublet rate
+1	mistrg3_sp	9	542944270	324692364	251674401	59.8021531749474	46.35363423211	1.7715998634531	45.7291781051701	22.5027007596143	19.0335792907254	11.0017765272147	0.0404116442236089

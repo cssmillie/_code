@@ -1,0 +1,2 @@
+Project	Number of collections	Total reads	Mapped reads	Mapped HQ reads	Mapped reads (%)	Mapped HQ reads (%)	Ribosomal (%)	Coding (%)	UTR (%)	Intronic (%)	Intergenic (%)	Doublet rate
+1	frozen2	12	380044928	308580859	251534162	81.1958892923312	66.1853753248879	3.5525492413178	44.1297382540241	13.6308281922067	26.7386668066215	11.9690397741419	1.9995612538432

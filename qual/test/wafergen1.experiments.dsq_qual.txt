@@ -1,0 +1,2 @@
+Project	Number of collections	Total reads	Mapped reads	Mapped HQ reads	Mapped reads (%)	Mapped HQ reads (%)	Ribosomal (%)	Coding (%)	UTR (%)	Intronic (%)	Intergenic (%)	Doublet rate
+1	wafergen1	9	395867925	254306079	182290154	64.2401323623277	46.0482253014058	7.58504325524414	31.1090990904342	18.101895341537	29.3381901120429	13.9693103333708	0.149318497242602

@@ -1,0 +1,131 @@
+library(optparse)
+if(interactive()){
+    args = list()
+    args$map = '~/aviv/summary/test.map'
+    args$ming = 1000
+    args$num = 5
+    args$out = 'test'
+} else{
+option_list = list(make_option('--dir', help='directory name'),
+                   make_option('--ming', help='genes per cell cutoff', type='integer'),
+                   make_option('--out', help='output prefix'),
+                   make_option('--num', help='number of downsamples', default=10, type='integer')
+                   )
+args = parse_args(OptionParser(option_list=option_list))
+}
+
+library(vegan)
+
+# subsample dge
+subsample_dge = function(x1, y1, y2){
+    # x1, x2 = number of umis (old, new)
+    # y1, y2 = number of reads (old, new)
+    r1 = rmultinom(1, y1-x1, rep(1, x1)) + 1
+    r2 = rrarefy(r1, y2)
+    x2 = sum(r2 > 0)
+    return(x2)
+}
+
+# reads per collection
+x.r = c()
+
+# cells per collection
+y.h = c()
+y.m = c()
+y.t = c()
+
+# get folder name
+folder = args$dir
+
+# load human dge
+print('loading human dge')
+h.dge = read.table(paste('~/aviv/data/', folder, '/dge/human.dge.txt.gz', sep=''), header=T, row.names=1, sep='\t')
+
+# load human reads
+print('loading human reads')
+h.reads = read.table(paste('~/aviv/data/', folder, '/dge/human.reads.dge.txt.gz', sep=''), header=T, row.names=1, sep='\t')
+
+# load mouse dge
+print('loading mouse dge')
+m.dge = read.table(paste('~/aviv/data/', folder, '/dge/mouse.dge.txt.gz', sep=''), header=T, row.names=1, sep='\t')
+
+# load mouse reads
+print('loading mouse reads')
+m.reads = read.table(paste('~/aviv/data/', folder, '/dge/mouse.reads.dge.txt.gz', sep=''), header=T, row.names=1, sep='\t')
+
+# count total reads
+total_reads = 0
+if(ncol(h.dge) > 1){total_reads = total_reads + sum(h.reads)}
+if(ncol(m.dge) > 1){total_reads = total_reads + sum(m.reads)}
+
+# get read counts
+max_reads = total_reads
+min_reads = 10**6
+x.i = seq(log10(min_reads), log10(max_reads), length.out=args$num)
+
+# count collections
+ncoll = 0
+
+# subsample human reads
+if(ncol(h.dge) > 1){
+    h.coll = length(unique(sapply(strsplit(colnames(h.dge), '\\.'), '[', 1)))
+    ncoll = h.coll
+    for(xi in x.i){
+        new_reads = rrarefy(h.reads, round((10**xi)*rowSums(h.reads)/sum(h.reads)))
+        new_dge = matrix(0, nrow=nrow(h.dge), ncol=ncol(h.dge))
+        subsample_dge = function(i,j){
+            x1 = h.dge[i,j]
+            y1 = h.reads[i,j]
+            y2 = new_reads[i,j]
+            r1 = rmultinom(1, y1-x1, rep(1,x1)) + 1
+            r2 = rrarefy(r1, y2)
+            x2 = sum(r2 > 0)
+            return(x2)
+        }
+        subsample_dge = Vectorize(subsample_dge)
+        ijs = which(new_reads > 0, arr.ind=T)
+        new_dge[ijs] = apply(ijs, 1, function(a){subsample_dge(a[[1]], a[[2]])})
+        h.cells = sum(colSums(new_dge > 0) >= args$ming)
+        print(h.cells)
+        y.h = c(y.h, h.cells/h.coll)
+    }
+} else {
+    y.h = c(y.h, rep(0, length(x.i)))
+}
+
+# subsample mouse reads
+if(ncol(m.dge) > 1){
+    m.coll = length(unique(sapply(strsplit(colnames(m.dge), '\\.'), '[', 1)))
+    ncoll = m.coll
+    for(xi in x.i){
+        new_reads = rrarefy(m.reads, round((10**xi)*rowSums(m.reads)/sum(m.reads)))
+        new_dge = matrix(0, nrow=nrow(m.dge), ncol=ncol(m.dge))
+        subsample_dge = function(i,j){
+            x1 = m.dge[i,j]
+            y1 = m.reads[i,j]
+            y2 = new_reads[i,j]
+            r1 = rmultinom(1, y1-x1, rep(1,x1)) + 1
+            r2 = rrarefy(r1, y2)
+            x2 = sum(r2 > 0)
+            return(x2)
+        }
+        subsample_dge = Vectorize(subsample_dge)
+        ijs= which(new_reads > 0, arr.ind=T)
+        new_dge[ijs] = apply(ijs, 1, function(a){subsample_dge(a[[1]], a[[2]])})
+        m.cells = sum(colSums(new_dge > 0) >= args$ming)
+        print(m.cells)
+        y.m = c(y.m, m.cells/m.coll)
+    }
+} else{
+    y.m = c(y.m, rep(0, length(x.i)))
+}
+
+# reads per collection
+x.r = c(x.r, x.i/ncoll)
+
+# total genes per collection
+y.t = y.h + y.m
+
+# save output to file
+z = list(x.r=x.r, y.h=y.h, y.m=y.m, y.t=y.t)
+saveRDS(z, paste(args$out, 'overseq.rds', sep='.'))

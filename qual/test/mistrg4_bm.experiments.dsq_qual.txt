@@ -1,0 +1,2 @@
+Project	Number of collections	Total reads	Mapped reads	Mapped HQ reads	Mapped reads (%)	Mapped HQ reads (%)	Ribosomal (%)	Coding (%)	UTR (%)	Intronic (%)	Intergenic (%)	Doublet rate
+1	mistrg4_bm	12	519823332	459755962	382772633	88.4446568089021	73.6351389860277	1.06276528226844	48.8800931588756	19.7492116352819	20.8125856119165	9.50415022021051	0.043509688016782
